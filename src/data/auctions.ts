@@ -4,6 +4,7 @@ export interface Auction {
   title: string;
   description: string;
   imageUrl: string;
+  images: string[]; // Multiple images for slideshow
   currentBid: number;
   startingBid: number;
   bidCount: number;
@@ -16,14 +17,24 @@ export interface Auction {
   };
   endTime: Date;
   status: 'active' | 'ending-soon' | 'ended';
+  documents?: {
+    name: string;
+    url: string;
+    type: string;
+  }[];
 }
 
 export const auctions: Auction[] = [
   {
     id: '1',
     title: 'Vintage Mechanical Watch',
-    description: 'A rare vintage mechanical watch from the 1960s in excellent condition.',
+    description: 'A rare vintage mechanical watch from the 1960s in excellent condition. Check out more details at https://watchhistory.com/vintage-1960s.',
     imageUrl: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314',
+    images: [
+      'https://images.unsplash.com/photo-1524592094714-0f0654e20314',
+      'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6',
+      'https://images.unsplash.com/photo-1509048191080-d2984bad6ae5'
+    ],
     currentBid: 450,
     startingBid: 200,
     bidCount: 12,
@@ -35,13 +46,25 @@ export const auctions: Auction[] = [
       avatar: 'https://randomuser.me/api/portraits/men/41.jpg'
     },
     endTime: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2), // 2 days from now
-    status: 'active'
+    status: 'active',
+    documents: [
+      {
+        name: 'Certificate of Authenticity',
+        url: 'https://images.unsplash.com/photo-1581736224940-a1aa8df181e0',
+        type: 'image/jpeg'
+      }
+    ]
   },
   {
     id: '2',
     title: 'Original Artwork: "Abstract Sunset"',
-    description: 'Original acrylic painting on canvas, signed by the artist.',
+    description: 'Original acrylic painting on canvas, signed by the artist. View more of the artist\'s work at https://artist-gallery.com/sunset.',
     imageUrl: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5',
+    images: [
+      'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5',
+      'https://images.unsplash.com/photo-1571115764595-644a1f56a55c',
+      'https://images.unsplash.com/photo-1549490349-8643362247b5'
+    ],
     currentBid: 1250,
     startingBid: 800,
     bidCount: 8,
@@ -53,13 +76,25 @@ export const auctions: Auction[] = [
       avatar: 'https://randomuser.me/api/portraits/women/32.jpg'
     },
     endTime: new Date(Date.now() + 1000 * 60 * 60 * 3), // 3 hours from now
-    status: 'ending-soon'
+    status: 'ending-soon',
+    documents: [
+      {
+        name: 'Provenance Documentation',
+        url: 'https://images.unsplash.com/photo-1618091372796-20ee7ec01261',
+        type: 'image/jpeg'
+      }
+    ]
   },
   {
     id: '3',
     title: 'Gaming PC - High Performance Build',
-    description: 'Custom-built gaming PC with RTX 3080, 32GB RAM, and 1TB SSD.',
+    description: 'Custom-built gaming PC with RTX 3080, 32GB RAM, and 1TB SSD. For benchmarks visit https://gpu-tests.tech/rtx3080.',
     imageUrl: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7',
+    images: [
+      'https://images.unsplash.com/photo-1587202372775-e229f172b9d7',
+      'https://images.unsplash.com/photo-1591489378430-ef2f4669cffb',
+      'https://images.unsplash.com/photo-1593640408182-31c70c8268f5'
+    ],
     currentBid: 1800,
     startingBid: 1500,
     bidCount: 5,
@@ -76,8 +111,13 @@ export const auctions: Auction[] = [
   {
     id: '4',
     title: 'Antique Wooden Furniture Set',
-    description: 'Beautiful handcrafted wooden furniture set from the early 1900s.',
+    description: 'Beautiful handcrafted wooden furniture set from the early 1900s. For care instructions, visit https://antiques-care.org/wood.',
     imageUrl: 'https://images.unsplash.com/photo-1540574163026-643ea20ade25',
+    images: [
+      'https://images.unsplash.com/photo-1540574163026-643ea20ade25',
+      'https://images.unsplash.com/photo-1538688423619-a81d3f23454b',
+      'https://images.unsplash.com/photo-1611486212355-d276af4581e0'
+    ],
     currentBid: 3200,
     startingBid: 2000,
     bidCount: 15,
@@ -89,13 +129,25 @@ export const auctions: Auction[] = [
       avatar: 'https://randomuser.me/api/portraits/women/54.jpg'
     },
     endTime: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day from now
-    status: 'ending-soon'
+    status: 'ending-soon',
+    documents: [
+      {
+        name: 'Appraisal Document',
+        url: 'https://images.unsplash.com/photo-1586952518485-11b180e92764',
+        type: 'image/jpeg'
+      }
+    ]
   },
   {
     id: '5',
     title: 'Limited Edition Sneakers',
-    description: 'Rare limited edition sneakers, never worn, with original box.',
-    imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff',
+    description: 'Rare limited edition sneakers, never worn, with original box. Find similar models at https://sneakers.io/limited.',
+    imageUrl: 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6',
+    images: [
+      'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6',
+      'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519',
+      'https://images.unsplash.com/photo-1607522370275-f14206abe5d3'
+    ],
     currentBid: 750,
     startingBid: 500,
     bidCount: 9,
@@ -107,13 +159,25 @@ export const auctions: Auction[] = [
       avatar: 'https://randomuser.me/api/portraits/men/22.jpg'
     },
     endTime: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3), // 3 days from now
-    status: 'active'
+    status: 'active',
+    documents: [
+      {
+        name: 'Authenticity Card',
+        url: 'https://images.unsplash.com/photo-1618091372796-20ee7ec01261',
+        type: 'image/jpeg'
+      }
+    ]
   },
   {
     id: '6',
     title: 'Luxury Designer Handbag',
-    description: 'Authentic designer handbag from latest collection, includes certification.',
+    description: 'Authentic designer handbag from latest collection, includes certification. View the entire collection at https://luxury-bags.com/designer2023.',
     imageUrl: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3',
+    images: [
+      'https://images.unsplash.com/photo-1584917865442-de89df76afd3',
+      'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d',
+      'https://images.unsplash.com/photo-1575822141483-413d4f22d6c0'
+    ],
     currentBid: 2250,
     startingBid: 1800,
     bidCount: 7,
@@ -125,6 +189,13 @@ export const auctions: Auction[] = [
       avatar: 'https://randomuser.me/api/portraits/women/3.jpg'
     },
     endTime: new Date(Date.now() + 1000 * 60 * 30), // 30 minutes from now
-    status: 'ending-soon'
+    status: 'ending-soon',
+    documents: [
+      {
+        name: 'Designer Certificate',
+        url: 'https://images.unsplash.com/photo-1599008633840-052c7f756385',
+        type: 'image/jpeg'
+      }
+    ]
   }
 ];

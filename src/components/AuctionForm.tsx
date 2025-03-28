@@ -3,7 +3,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Upload, X, Plus, FileText } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -35,14 +35,34 @@ const auctionFormSchema = z.object({
     required_error: "End date is required",
   }).refine((date) => date > new Date(), {
     message: "End date must be in the future",
-  })
+  }),
+  // We'll handle images and documents outside of zod validation for simplicity
 });
 
 type AuctionFormValues = z.infer<typeof auctionFormSchema>;
 
+// For the demo, we'll simulate image URLs
+const demoImageUrls = [
+  "https://images.unsplash.com/photo-1524592094714-0f0654e20314",
+  "https://images.unsplash.com/photo-1542496658-e33a6d0d50f6",
+  "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5",
+  "https://images.unsplash.com/photo-1587202372775-e229f172b9d7",
+  "https://images.unsplash.com/photo-1540574163026-643ea20ade25",
+  "https://images.unsplash.com/photo-1591489378430-ef2f4669cffb"
+];
+
+// For the demo, we'll simulate document URLs and types
+const demoDocumentTypes = [
+  { name: "Certificate of Authenticity", url: "https://images.unsplash.com/photo-1599008633840-052c7f756385", type: "image/jpeg" },
+  { name: "Appraisal Document", url: "https://images.unsplash.com/photo-1586952518485-11b180e92764", type: "image/jpeg" },
+  { name: "Provenance Documentation", url: "https://images.unsplash.com/photo-1618091372796-20ee7ec01261", type: "image/jpeg" }
+];
+
 const AuctionForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [images, setImages] = useState<string[]>([]);
+  const [documents, setDocuments] = useState<{name: string; url: string; type: string}[]>([]);
   
   const form = useForm<AuctionFormValues>({
     resolver: zodResolver(auctionFormSchema),
@@ -58,7 +78,11 @@ const AuctionForm = () => {
     
     try {
       // In a real app, this would send data to a backend
-      console.log("Creating new auction:", data);
+      console.log("Creating new auction:", {
+        ...data,
+        images,
+        documents
+      });
       
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -70,6 +94,8 @@ const AuctionForm = () => {
       
       // Reset form
       form.reset();
+      setImages([]);
+      setDocuments([]);
       
       // Close the sheet after successful submission
       document.querySelector<HTMLButtonElement>(".sheet-close-button")?.click();
@@ -84,9 +110,94 @@ const AuctionForm = () => {
     }
   };
 
+  const handleImageUpload = () => {
+    // In a real app, this would upload a file
+    // For demo, we'll randomly select from our demo URLs
+    if (images.length < 5) {
+      const randomIndex = Math.floor(Math.random() * demoImageUrls.length);
+      setImages([...images, demoImageUrls[randomIndex]]);
+    } else {
+      toast({
+        title: "Maximum 5 images",
+        description: "You can only upload up to 5 images for an auction.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const removeImage = (index: number) => {
+    const newImages = [...images];
+    newImages.splice(index, 1);
+    setImages(newImages);
+  };
+
+  const handleDocumentUpload = () => {
+    // In a real app, this would upload a document
+    // For demo, we'll randomly select from our demo documents
+    if (documents.length < 3) {
+      const randomIndex = Math.floor(Math.random() * demoDocumentTypes.length);
+      const docType = demoDocumentTypes[randomIndex];
+      
+      // Check if we already have this document type
+      if (!documents.some(doc => doc.name === docType.name)) {
+        setDocuments([...documents, docType]);
+      } else {
+        toast({
+          title: "Document already added",
+          description: "You already added this type of document.",
+        });
+      }
+    } else {
+      toast({
+        title: "Maximum 3 documents",
+        description: "You can only upload up to 3 documents for an auction.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const removeDocument = (index: number) => {
+    const newDocuments = [...documents];
+    newDocuments.splice(index, 1);
+    setDocuments(newDocuments);
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mt-5 space-y-6">
+        {/* Image Upload Section */}
+        <div>
+          <h3 className="text-sm font-medium mb-2">Images (Max 5)</h3>
+          
+          <div className="grid grid-cols-3 gap-2 mb-2">
+            {images.map((img, index) => (
+              <div key={index} className="relative h-20 rounded-md overflow-hidden">
+                <img src={img} alt={`Upload ${index + 1}`} className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => removeImage(index)}
+                  className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-sm hover:bg-gray-100"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+            
+            {images.length < 5 && (
+              <button
+                type="button"
+                onClick={handleImageUpload}
+                className="h-20 border-2 border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center text-gray-500 hover:border-auction-purple hover:text-auction-purple transition-colors"
+              >
+                <Upload className="h-5 w-5 mb-1" />
+                <span className="text-xs">Upload</span>
+              </button>
+            )}
+          </div>
+          
+          <p className="text-xs text-gray-500">Upload up to 5 images of your item.</p>
+        </div>
+      
         <FormField
           control={form.control}
           name="title"
@@ -112,13 +223,13 @@ const AuctionForm = () => {
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="A rare vintage mechanical watch from the 1960s in excellent condition."
+                  placeholder="A rare vintage mechanical watch from the 1960s in excellent condition. Check out more details at https://watchhistory.com."
                   className="min-h-[120px]" 
                   {...field} 
                 />
               </FormControl>
               <FormDescription>
-                Provide details about your item's condition, history, and special features.
+                Provide details about your item's condition, history, and special features. URLs will be automatically detected and made clickable.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -188,6 +299,42 @@ const AuctionForm = () => {
             </FormItem>
           )}
         />
+        
+        {/* Document Upload Section (Optional) */}
+        <div>
+          <h3 className="text-sm font-medium mb-2">Documents (Optional)</h3>
+          
+          <div className="space-y-2 mb-2">
+            {documents.map((doc, index) => (
+              <div key={index} className="flex items-center justify-between p-2 border rounded-md">
+                <div className="flex items-center">
+                  <FileText className="h-4 w-4 mr-2 text-auction-purple" />
+                  <span className="text-sm">{doc.name}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeDocument(index)}
+                  className="text-gray-500 hover:text-red-500"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+            
+            {documents.length < 3 && (
+              <button
+                type="button"
+                onClick={handleDocumentUpload}
+                className="w-full p-2 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center text-gray-500 hover:border-auction-purple hover:text-auction-purple transition-colors"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                <span className="text-sm">Add Document</span>
+              </button>
+            )}
+          </div>
+          
+          <p className="text-xs text-gray-500">Upload optional documents like certificates of authenticity or appraisals.</p>
+        </div>
         
         <div className="flex justify-end gap-3">
           <SheetClose className="sheet-close-button">

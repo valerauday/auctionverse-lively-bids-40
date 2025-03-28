@@ -10,6 +10,9 @@ import PlaceBidForm from "@/components/PlaceBidForm";
 import BidLog from "@/components/BidLog";
 import AuctionStats from "@/components/AuctionStats";
 import { cn } from "@/lib/utils";
+import ImageSlideshow from "@/components/ImageSlideshow";
+import LinkifiedText from "@/components/LinkifiedText";
+import DocumentViewer from "@/components/DocumentViewer";
 
 const AuctionDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -88,11 +91,7 @@ const AuctionDetail = () => {
           {/* Left Column - Image and Auction Info */}
           <div className="lg:col-span-2 space-y-6">
             <div className="relative bg-white rounded-xl overflow-hidden border border-gray-100">
-              <img 
-                src={auction.imageUrl} 
-                alt={auction.title} 
-                className="w-full h-80 object-cover"
-              />
+              <ImageSlideshow images={auction.images} title={auction.title} />
               
               {/* Status Badge */}
               <div className="absolute top-4 right-4">
@@ -144,8 +143,14 @@ const AuctionDetail = () => {
               {/* Description */}
               <div className="mt-6">
                 <h2 className="text-xl font-semibold mb-3">Description</h2>
-                <p className="text-gray-700 whitespace-pre-line">{auction.description}</p>
+                <LinkifiedText 
+                  text={auction.description} 
+                  className="text-gray-700 whitespace-pre-line" 
+                />
               </div>
+              
+              {/* Documents Section */}
+              <DocumentViewer documents={auction.documents} />
             </div>
           </div>
           
