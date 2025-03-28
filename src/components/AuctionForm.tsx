@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -10,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useNavigate } from "react-router-dom";
 import {
   Form,
   FormControl,
@@ -25,7 +25,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { SheetClose } from "@/components/ui/sheet";
 
 const auctionFormSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
@@ -36,12 +35,10 @@ const auctionFormSchema = z.object({
   }).refine((date) => date > new Date(), {
     message: "End date must be in the future",
   }),
-  // We'll handle images and documents outside of zod validation for simplicity
 });
 
 type AuctionFormValues = z.infer<typeof auctionFormSchema>;
 
-// For the demo, we'll simulate image URLs
 const demoImageUrls = [
   "https://images.unsplash.com/photo-1524592094714-0f0654e20314",
   "https://images.unsplash.com/photo-1542496658-e33a6d0d50f6",
@@ -51,7 +48,6 @@ const demoImageUrls = [
   "https://images.unsplash.com/photo-1591489378430-ef2f4669cffb"
 ];
 
-// For the demo, we'll simulate document URLs and types
 const demoDocumentTypes = [
   { name: "Certificate of Authenticity", url: "https://images.unsplash.com/photo-1599008633840-052c7f756385", type: "image/jpeg" },
   { name: "Appraisal Document", url: "https://images.unsplash.com/photo-1586952518485-11b180e92764", type: "image/jpeg" },
@@ -60,6 +56,7 @@ const demoDocumentTypes = [
 
 const AuctionForm = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [documents, setDocuments] = useState<{name: string; url: string; type: string}[]>([]);
@@ -77,14 +74,12 @@ const AuctionForm = () => {
     setIsSubmitting(true);
     
     try {
-      // In a real app, this would send data to a backend
       console.log("Creating new auction:", {
         ...data,
         images,
         documents
       });
       
-      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast({
@@ -92,13 +87,11 @@ const AuctionForm = () => {
         description: `"${data.title}" has been listed for auction.`,
       });
       
-      // Reset form
       form.reset();
       setImages([]);
       setDocuments([]);
       
-      // Close the sheet after successful submission
-      document.querySelector<HTMLButtonElement>(".sheet-close-button")?.click();
+      navigate("/");
     } catch (error) {
       toast({
         title: "Error creating auction",
@@ -111,8 +104,6 @@ const AuctionForm = () => {
   };
 
   const handleImageUpload = () => {
-    // In a real app, this would upload a file
-    // For demo, we'll randomly select from our demo URLs
     if (images.length < 5) {
       const randomIndex = Math.floor(Math.random() * demoImageUrls.length);
       setImages([...images, demoImageUrls[randomIndex]]);
@@ -132,13 +123,10 @@ const AuctionForm = () => {
   };
 
   const handleDocumentUpload = () => {
-    // In a real app, this would upload a document
-    // For demo, we'll randomly select from our demo documents
     if (documents.length < 3) {
       const randomIndex = Math.floor(Math.random() * demoDocumentTypes.length);
       const docType = demoDocumentTypes[randomIndex];
       
-      // Check if we already have this document type
       if (!documents.some(doc => doc.name === docType.name)) {
         setDocuments([...documents, docType]);
       } else {
@@ -164,8 +152,7 @@ const AuctionForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-5 space-y-6">
-        {/* Image Upload Section */}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div>
           <h3 className="text-sm font-medium mb-2">Images (Max 5)</h3>
           
@@ -300,7 +287,6 @@ const AuctionForm = () => {
           )}
         />
         
-        {/* Document Upload Section (Optional) */}
         <div>
           <h3 className="text-sm font-medium mb-2">Documents (Optional)</h3>
           
@@ -337,9 +323,13 @@ const AuctionForm = () => {
         </div>
         
         <div className="flex justify-end gap-3">
-          <SheetClose className="sheet-close-button">
-            <Button type="button" variant="outline">Cancel</Button>
-          </SheetClose>
+          <Button 
+            type="button" 
+            variant="outline"
+            onClick={() => navigate("/")}
+          >
+            Cancel
+          </Button>
           <Button 
             type="submit" 
             className="bg-auction-purple hover:bg-auction-purple-dark text-white"
