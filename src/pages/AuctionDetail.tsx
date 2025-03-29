@@ -7,17 +7,20 @@ import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import { auctions, Auction } from "@/data/auctions";
 import PlaceBidForm from "@/components/PlaceBidForm";
-import BidLog from "@/components/BidLog";
+import BidTimeline from "@/components/BidTimeline";
 import AuctionStats from "@/components/AuctionStats";
 import { cn } from "@/lib/utils";
 import ImageSlideshow from "@/components/ImageSlideshow";
 import LinkifiedText from "@/components/LinkifiedText";
 import DocumentViewer from "@/components/DocumentViewer";
+import ReportAuctionModal from "@/components/ReportAuctionModal";
+import StickyBidFooter from "@/components/StickyBidFooter";
 
 const AuctionDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [auction, setAuction] = useState<Auction | null>(null);
   const [loading, setLoading] = useState(true);
+  const [timeLeft, setTimeLeft] = useState("");
 
   useEffect(() => {
     // Simulate API call
@@ -28,12 +31,31 @@ const AuctionDetail = () => {
     }, 800);
   }, [id]);
 
+  // Update time left every second
+  useEffect(() => {
+    if (!auction || auction.status === 'ended' || auction.status === 'upcoming') return;
+    
+    const updateTimeLeft = () => {
+      if (auction) {
+        setTimeLeft(formatDistanceToNow(auction.endTime, { addSuffix: false }));
+      }
+    };
+    
+    // Initial update
+    updateTimeLeft();
+    
+    // Set interval for updates
+    const interval = setInterval(updateTimeLeft, 1000);
+    
+    return () => clearInterval(interval);
+  }, [auction]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-skeleton-pulse flex flex-col space-y-4">
+          <div className="animate-pulse flex flex-col space-y-4">
             <div className="h-6 bg-gray-200 rounded w-1/4"></div>
             <div className="h-72 bg-gray-200 rounded"></div>
             <div className="h-8 bg-gray-200 rounded w-1/2"></div>
@@ -71,12 +93,11 @@ const AuctionDetail = () => {
     }).format(amount);
   };
 
-  const timeLeft = formatDistanceToNow(auction.endTime, { addSuffix: false });
   const isEndingSoon = auction.status === 'ending-soon';
   const isUpcoming = auction.status === 'upcoming';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-20">
       <Header />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
@@ -135,7 +156,10 @@ const AuctionDetail = () => {
             </div>
             
             <div className="bg-white rounded-xl border border-gray-100 p-6 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{auction.title}</h1>
+              <div className="flex justify-between items-start">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{auction.title}</h1>
+                <ReportAuctionModal auctionId={auction.id} auctionTitle={auction.title} />
+              </div>
               
               {/* Seller Information */}
               <div className="flex items-center mb-4">
@@ -170,10 +194,15 @@ const AuctionDetail = () => {
             </div>
           </div>
           
-          {/* Right Column - Bid Information and Actions */}
+          {/* Right Column */}
           <div className="space-y-6">
-            {/* Current Bid Info */}
-            <div className="bg-white rounded-xl border border-gray-100 p-6 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+            {/* Bid Timeline - Now given more prominence */}
+            <div className="animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+              <BidTimeline auctionId={auction.id} />
+            </div>
+            
+            {/* Current Bid Info (Only visible on mobile) */}
+            <div className="lg:hidden bg-white rounded-xl border border-gray-100 p-6 animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
               <div className="mb-4">
                 <h2 className="text-sm text-gray-500 uppercase">
                   {isUpcoming ? "Starting Bid" : "Current Bid"}
@@ -190,52 +219,23 @@ const AuctionDetail = () => {
                 </div>
               </div>
               
-              {/* Time Left */}
-              <div className="mb-6">
-                <h2 className="text-sm text-gray-500 uppercase">
-                  {isUpcoming ? "Starts" : "Time Left"}
-                </h2>
-                <div className="flex items-center">
-                  {isUpcoming ? (
-                    <>
-                      <Calendar className="h-5 w-5 mr-2 text-auction-purple" />
-                      <span className="font-medium">
-                        {auction.startTime ? format(auction.startTime, 'MMMM d, yyyy') : 'Coming soon'}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <Clock className="h-5 w-5 mr-2 text-auction-purple" />
-                      <span className="font-medium">
-                        {formatDistanceToNow(auction.endTime, { addSuffix: true })}
-                      </span>
-                    </>
-                  )}
-                </div>
-              </div>
-              
-              {/* Place Bid Form or Notification for Upcoming */}
-              {isUpcoming ? (
-                <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 text-center">
-                  <p className="text-blue-800 mb-3">This auction hasn't started yet.</p>
-                  <button 
-                    className="bg-auction-purple hover:bg-auction-purple-dark text-white py-2 px-4 rounded-full text-sm transition-colors w-full"
-                  >
-                    Get Notified When It Starts
-                  </button>
-                </div>
-              ) : (
+              {/* Place Bid Form on mobile */}
+              {!isUpcoming && (
                 <PlaceBidForm auctionId={auction.id} currentBid={auction.currentBid} />
               )}
-            </div>
-            
-            {/* Bid History */}
-            <div className="animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
-              <BidLog auctionId={auction.id} />
             </div>
           </div>
         </div>
       </main>
+      
+      {/* Sticky Bid Footer - Visible on all screen sizes */}
+      <StickyBidFooter 
+        auctionId={auction.id}
+        currentBid={auction.currentBid}
+        endTime={auction.endTime}
+        isEndingSoon={isEndingSoon}
+        status={auction.status}
+      />
       
       {/* Footer */}
       <footer className="bg-white mt-16 border-t border-gray-200 animate-fade-in" style={{ animationDelay: '0.6s' }}>
