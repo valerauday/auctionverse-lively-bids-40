@@ -13,7 +13,7 @@ interface StickyBidFooterProps {
   currentBid: number;
   endTime: Date;
   isEndingSoon: boolean;
-  status: string;
+  status: 'active' | 'ending-soon' | 'ended' | 'upcoming';
 }
 
 const StickyBidFooter = ({ auctionId, currentBid, endTime, isEndingSoon, status }: StickyBidFooterProps) => {
