@@ -1,8 +1,15 @@
 
-import { Search, Bell, User, Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { User, Menu } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -12,53 +19,55 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <a href="/" className="flex-shrink-0 flex items-center">
+            <Link to="/" className="flex-shrink-0 flex items-center">
               <span className="text-2xl font-bold text-auction-purple">AuctionVerse</span>
-            </a>
+            </Link>
             <nav className="hidden sm:ml-10 sm:flex sm:space-x-8">
-              <a
-                href="/"
+              <Link
+                to="/"
                 className="border-auction-purple text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
                 Browse
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="/my-bids"
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
                 My Bids
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="/my-auctions"
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
-                Watchlist
-              </a>
-              <a
-                href="#"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                Sell
-              </a>
+                My Auctions
+              </Link>
             </nav>
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-auction-purple focus:border-auction-purple sm:text-sm"
-                placeholder="Search auctions"
-              />
-            </div>
-            <button className="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-auction-purple">
-              <Bell className="h-6 w-6" />
-            </button>
-            <button className="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-auction-purple">
-              <User className="h-6 w-6" />
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-auction-purple">
+                  <User className="h-6 w-6" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="px-2 py-1.5">
+                  <p className="text-sm font-medium">John Doe</p>
+                  <p className="text-xs text-gray-500">john.doe@example.com</p>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link to="/profile" className="w-full">Profile Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link to="/account" className="w-full">Account</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="cursor-pointer text-red-600">
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div className="flex items-center sm:hidden">
             <button
@@ -74,30 +83,24 @@ const Header = () => {
       {/* Mobile menu */}
       <div className={cn("sm:hidden", mobileMenuOpen ? "block" : "hidden")}>
         <div className="pt-2 pb-3 space-y-1">
-          <a
-            href="/"
+          <Link
+            to="/"
             className="bg-auction-purple bg-opacity-10 border-auction-purple text-auction-purple block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
           >
             Browse
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/my-bids"
             className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
           >
             My Bids
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/my-auctions"
             className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
           >
-            Watchlist
-          </a>
-          <a
-            href="#"
-            className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
-          >
-            Sell
-          </a>
+            My Auctions
+          </Link>
         </div>
         <div className="pt-4 pb-3 border-t border-gray-200">
           <div className="flex items-center px-4">
@@ -107,32 +110,28 @@ const Header = () => {
               </div>
             </div>
             <div className="ml-3">
-              <div className="text-base font-medium text-gray-800">Guest User</div>
-              <div className="text-sm font-medium text-gray-500">guest@example.com</div>
+              <div className="text-base font-medium text-gray-800">John Doe</div>
+              <div className="text-sm font-medium text-gray-500">john.doe@example.com</div>
             </div>
-            <button className="ml-auto flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-auction-purple">
-              <Bell className="h-6 w-6" />
-            </button>
           </div>
           <div className="mt-3 space-y-1">
-            <a
-              href="#"
+            <Link
+              to="/profile"
               className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
             >
-              Your Profile
-            </a>
-            <a
-              href="#"
+              Profile Settings
+            </Link>
+            <Link
+              to="/account"
               className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
             >
-              Settings
-            </a>
-            <a
-              href="#"
-              className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+              Account
+            </Link>
+            <button
+              className="w-full text-left block px-4 py-2 text-base font-medium text-red-600 hover:text-red-700 hover:bg-gray-100"
             >
               Sign out
-            </a>
+            </button>
           </div>
         </div>
       </div>
