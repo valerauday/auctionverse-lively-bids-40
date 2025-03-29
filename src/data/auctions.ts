@@ -16,7 +16,8 @@ export interface Auction {
     avatar: string;
   };
   endTime: Date;
-  status: 'active' | 'ending-soon' | 'ended';
+  startTime?: Date; // Added for upcoming auctions
+  status: 'active' | 'ending-soon' | 'ended' | 'upcoming';
   documents?: {
     name: string;
     url: string;
@@ -197,5 +198,85 @@ export const auctions: Auction[] = [
         type: 'image/jpeg'
       }
     ]
+  },
+  // Adding upcoming auctions
+  {
+    id: '7',
+    title: 'Rare Book Collection',
+    description: 'A collection of first edition classic novels in pristine condition. More details at https://rare-books-archive.com/classics.',
+    imageUrl: 'https://images.unsplash.com/photo-1550399105-c4db5fb85c18',
+    images: [
+      'https://images.unsplash.com/photo-1550399105-c4db5fb85c18',
+      'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f',
+      'https://images.unsplash.com/photo-1516979187457-637abb4f9353'
+    ],
+    currentBid: 0,
+    startingBid: 1200,
+    bidCount: 0,
+    views: 175,
+    likes: 32,
+    seller: {
+      id: 's7',
+      name: 'BookCollector',
+      avatar: 'https://randomuser.me/api/portraits/men/52.jpg'
+    },
+    startTime: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2), // Starts in 2 days
+    endTime: new Date(Date.now() + 1000 * 60 * 60 * 24 * 9), // Ends in 9 days
+    status: 'upcoming',
+    documents: [
+      {
+        name: 'Authenticity Certificate',
+        url: 'https://images.unsplash.com/photo-1586952518485-11b180e92764',
+        type: 'image/jpeg'
+      }
+    ]
+  },
+  {
+    id: '8',
+    title: 'Vintage Camera Collection',
+    description: 'Collection of working vintage film cameras from the 1950s-1970s. See sample photos at https://vintage-lens.com/gallery.',
+    imageUrl: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32',
+    images: [
+      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32',
+      'https://images.unsplash.com/photo-1495707902641-75cac588d2e9',
+      'https://images.unsplash.com/photo-1452780212940-6f5c0d14d848'
+    ],
+    currentBid: 0,
+    startingBid: 950,
+    bidCount: 0,
+    views: 134,
+    likes: 41,
+    seller: {
+      id: 's8',
+      name: 'VintageGear',
+      avatar: 'https://randomuser.me/api/portraits/women/61.jpg'
+    },
+    startTime: new Date(Date.now() + 1000 * 60 * 60 * 24 * 1), // Starts tomorrow
+    endTime: new Date(Date.now() + 1000 * 60 * 60 * 24 * 8), // Ends in 8 days
+    status: 'upcoming'
+  },
+  {
+    id: '9',
+    title: 'Handcrafted Pottery Set',
+    description: 'Exclusive handmade pottery set by renowned artisan. See the creation process at https://artisan-pottery.org/process.',
+    imageUrl: 'https://images.unsplash.com/photo-1493106641515-6b5631de4bb9',
+    images: [
+      'https://images.unsplash.com/photo-1493106641515-6b5631de4bb9',
+      'https://images.unsplash.com/photo-1610701596007-11502861dcfa',
+      'https://images.unsplash.com/photo-1576020799627-aeac74d58064'
+    ],
+    currentBid: 0,
+    startingBid: 580,
+    bidCount: 0,
+    views: 98,
+    likes: 23,
+    seller: {
+      id: 's9',
+      name: 'ArtisanCrafts',
+      avatar: 'https://randomuser.me/api/portraits/men/17.jpg'
+    },
+    startTime: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3), // Starts in 3 days
+    endTime: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10), // Ends in 10 days
+    status: 'upcoming'
   }
 ];

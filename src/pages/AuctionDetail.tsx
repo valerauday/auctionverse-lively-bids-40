@@ -1,8 +1,8 @@
 
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { formatDistanceToNow } from "date-fns";
-import { Clock, ArrowLeft } from "lucide-react";
+import { formatDistanceToNow, format } from "date-fns";
+import { Clock, ArrowLeft, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import { auctions, Auction } from "@/data/auctions";
@@ -25,7 +25,7 @@ const AuctionDetail = () => {
       const foundAuction = auctions.find(a => a.id === id);
       setAuction(foundAuction || null);
       setLoading(false);
-    }, 500);
+    }, 800);
   }, [id]);
 
   if (loading) {
@@ -33,7 +33,7 @@ const AuctionDetail = () => {
       <div className="min-h-screen bg-gray-50">
         <Header />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse flex flex-col space-y-4">
+          <div className="animate-skeleton-pulse flex flex-col space-y-4">
             <div className="h-6 bg-gray-200 rounded w-1/4"></div>
             <div className="h-72 bg-gray-200 rounded"></div>
             <div className="h-8 bg-gray-200 rounded w-1/2"></div>
@@ -49,7 +49,7 @@ const AuctionDetail = () => {
       <div className="min-h-screen bg-gray-50">
         <Header />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center py-12">
+          <div className="text-center py-12 animate-fade-in">
             <h2 className="text-2xl font-bold text-gray-900">Auction Not Found</h2>
             <p className="mt-2 text-gray-500">The auction you're looking for doesn't exist or has been removed.</p>
             <Link to="/" className="mt-6 inline-flex items-center text-auction-purple hover:underline">
@@ -73,14 +73,15 @@ const AuctionDetail = () => {
 
   const timeLeft = formatDistanceToNow(auction.endTime, { addSuffix: false });
   const isEndingSoon = auction.status === 'ending-soon';
+  const isUpcoming = auction.status === 'upcoming';
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
         {/* Breadcrumb Navigation */}
-        <nav className="mb-6">
+        <nav className="mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
           <Link to="/" className="flex items-center text-auction-purple hover:underline">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Auctions
@@ -90,7 +91,7 @@ const AuctionDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Image and Auction Info */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="relative bg-white rounded-xl overflow-hidden border border-gray-100">
+            <div className="relative bg-white rounded-xl overflow-hidden border border-gray-100 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
               <ImageSlideshow images={auction.images} title={auction.title} />
               
               {/* Status Badge */}
@@ -99,10 +100,13 @@ const AuctionDetail = () => {
                   "px-3 py-1 rounded-full text-sm font-medium",
                   auction.status === 'active' ? "bg-green-100 text-green-800" : 
                   auction.status === 'ending-soon' ? "bg-orange-100 text-orange-800" : 
+                  auction.status === 'upcoming' ? "bg-blue-100 text-blue-800" :
                   "bg-gray-100 text-gray-800"
                 )}>
                   {auction.status === 'active' ? 'Active' : 
                    auction.status === 'ending-soon' ? `Ends in ${timeLeft}` : 
+                   auction.status === 'upcoming' && auction.startTime ? `Starts ${format(auction.startTime, 'MMM d')}` :
+                   auction.status === 'upcoming' ? 'Upcoming' :
                    'Ended'}
                 </span>
               </div>
@@ -116,9 +120,21 @@ const AuctionDetail = () => {
                   </div>
                 </div>
               )}
+              
+              {/* Info for Upcoming Auctions */}
+              {isUpcoming && auction.startTime && (
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                  <div className="flex items-center text-white">
+                    <Calendar className="h-5 w-5 mr-2" />
+                    <span className="font-medium">
+                      Starts {format(auction.startTime, 'MMMM d, yyyy')}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
             
-            <div className="bg-white rounded-xl border border-gray-100 p-6">
+            <div className="bg-white rounded-xl border border-gray-100 p-6 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{auction.title}</h1>
               
               {/* Seller Information */}
@@ -157,42 +173,72 @@ const AuctionDetail = () => {
           {/* Right Column - Bid Information and Actions */}
           <div className="space-y-6">
             {/* Current Bid Info */}
-            <div className="bg-white rounded-xl border border-gray-100 p-6">
+            <div className="bg-white rounded-xl border border-gray-100 p-6 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
               <div className="mb-4">
-                <h2 className="text-sm text-gray-500 uppercase">Current Bid</h2>
+                <h2 className="text-sm text-gray-500 uppercase">
+                  {isUpcoming ? "Starting Bid" : "Current Bid"}
+                </h2>
                 <div className="flex items-baseline">
                   <span className="text-3xl font-bold text-auction-purple mr-2">
-                    {formatCurrency(auction.currentBid)}
+                    {isUpcoming ? formatCurrency(auction.startingBid) : formatCurrency(auction.currentBid)}
                   </span>
-                  <span className="text-gray-500">
-                    started at {formatCurrency(auction.startingBid)}
-                  </span>
+                  {!isUpcoming && (
+                    <span className="text-gray-500">
+                      started at {formatCurrency(auction.startingBid)}
+                    </span>
+                  )}
                 </div>
               </div>
               
               {/* Time Left */}
               <div className="mb-6">
-                <h2 className="text-sm text-gray-500 uppercase">Time Left</h2>
+                <h2 className="text-sm text-gray-500 uppercase">
+                  {isUpcoming ? "Starts" : "Time Left"}
+                </h2>
                 <div className="flex items-center">
-                  <Clock className="h-5 w-5 mr-2 text-auction-purple" />
-                  <span className="font-medium">
-                    {formatDistanceToNow(auction.endTime, { addSuffix: true })}
-                  </span>
+                  {isUpcoming ? (
+                    <>
+                      <Calendar className="h-5 w-5 mr-2 text-auction-purple" />
+                      <span className="font-medium">
+                        {auction.startTime ? format(auction.startTime, 'MMMM d, yyyy') : 'Coming soon'}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Clock className="h-5 w-5 mr-2 text-auction-purple" />
+                      <span className="font-medium">
+                        {formatDistanceToNow(auction.endTime, { addSuffix: true })}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
               
-              {/* Place Bid Form */}
-              <PlaceBidForm auctionId={auction.id} currentBid={auction.currentBid} />
+              {/* Place Bid Form or Notification for Upcoming */}
+              {isUpcoming ? (
+                <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 text-center">
+                  <p className="text-blue-800 mb-3">This auction hasn't started yet.</p>
+                  <button 
+                    className="bg-auction-purple hover:bg-auction-purple-dark text-white py-2 px-4 rounded-full text-sm transition-colors w-full"
+                  >
+                    Get Notified When It Starts
+                  </button>
+                </div>
+              ) : (
+                <PlaceBidForm auctionId={auction.id} currentBid={auction.currentBid} />
+              )}
             </div>
             
             {/* Bid History */}
-            <BidLog auctionId={auction.id} />
+            <div className="animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
+              <BidLog auctionId={auction.id} />
+            </div>
           </div>
         </div>
       </main>
       
       {/* Footer */}
-      <footer className="bg-white mt-16 border-t border-gray-200">
+      <footer className="bg-white mt-16 border-t border-gray-200 animate-fade-in" style={{ animationDelay: '0.6s' }}>
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <p className="text-gray-500 text-sm">© 2023 AuctionVerse. All rights reserved.</p>
