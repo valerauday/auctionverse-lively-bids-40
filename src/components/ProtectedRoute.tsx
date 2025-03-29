@@ -1,13 +1,15 @@
 
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  adminOnly?: boolean;
 }
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isAuthenticated, isLoading } = useAuth();
+const ProtectedRoute = ({ children, adminOnly = false }: ProtectedRouteProps) => {
+  const { isAuthenticated, isLoading, user } = useAuth();
+  const location = useLocation();
   
   // Show loading state while checking authentication
   if (isLoading) {
@@ -23,7 +25,15 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/login" />;
   }
   
-  // Render children if authenticated
+  // Check if route requires admin privileges
+  if (adminOnly && location.pathname.startsWith("/admin")) {
+    // Check if user is admin
+    if (user?.id !== "admin1") {
+      return <Navigate to="/" />;
+    }
+  }
+  
+  // Render children if authenticated and authorized
   return <>{children}</>;
 };
 

@@ -14,6 +14,7 @@ import MyAuctions from "./pages/MyAuctions";
 import AuctionAnalytics from "./pages/AuctionAnalytics";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,11 @@ const App = () => (
           <Route path="/auction-analytics/:id" element={
             <ProtectedRoute>
               <AuctionAnalytics />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/*" element={
+            <ProtectedRoute>
+              <AdminDashboard />
             </ProtectedRoute>
           } />
           <Route path="*" element={<NotFound />} />

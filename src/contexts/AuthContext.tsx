@@ -9,6 +9,7 @@ export interface User {
   email: string;
   name: string;
   avatar: string;
+  isAdmin?: boolean;
 }
 
 interface AuthContextType {
@@ -18,6 +19,7 @@ interface AuthContextType {
   signup: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
+  isAdmin: boolean;
 }
 
 // Create the auth context
@@ -26,11 +28,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Dummy users for testing
 const dummyUsers = [
   {
+    id: 'admin1',
+    email: 'admin@example.com',
+    password: 'admin123',
+    name: 'Admin User',
+    avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
+    isAdmin: true,
+  },
+  {
     id: 'user1',
     email: 'john@example.com',
     password: 'password123',
     name: 'John Doe',
     avatar: 'https://randomuser.me/api/portraits/men/41.jpg',
+    isAdmin: false,
   },
   {
     id: 'user2',
@@ -38,6 +49,7 @@ const dummyUsers = [
     password: 'password123',
     name: 'Jane Smith',
     avatar: 'https://randomuser.me/api/portraits/women/32.jpg',
+    isAdmin: false,
   },
 ];
 
@@ -127,6 +139,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email,
         name,
         avatar: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 70)}.jpg`,
+        isAdmin: false,
       };
       
       setUser(newUser);
@@ -169,6 +182,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signup,
     logout,
     isAuthenticated: !!user,
+    isAdmin: user?.isAdmin || false,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
