@@ -55,6 +55,28 @@ const dummyBids = [
     status: "winning",
     timeLeft: "4d 8h",
     image: "/placeholder.svg"
+  },
+  {
+    id: "bid6",
+    auctionId: "a6",
+    auctionTitle: "Vintage Motorcycle",
+    bidAmount: 1800,
+    currentHighestBid: 2100,
+    status: "lost",
+    timeLeft: "Ended",
+    endedDate: "Jun 15, 2023",
+    image: "/placeholder.svg"
+  },
+  {
+    id: "bid7",
+    auctionId: "a7",
+    auctionTitle: "Limited Edition Watch",
+    bidAmount: 650,
+    currentHighestBid: 850,
+    status: "lost",
+    timeLeft: "Ended",
+    endedDate: "Jul 3, 2023",
+    image: "/placeholder.svg"
   }
 ];
 
@@ -76,9 +98,7 @@ const MyBids = () => {
   // Filter bids based on active tab
   const filteredBids = activeTab === 'all' 
     ? bids 
-    : activeTab === 'winning' 
-      ? bids.filter(bid => bid.status === 'winning')
-      : bids.filter(bid => bid.status === 'outbid');
+    : bids.filter(bid => bid.status === activeTab);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -96,7 +116,8 @@ const MyBids = () => {
               {[
                 { id: 'all', label: 'All Bids' },
                 { id: 'winning', label: 'Winning' },
-                { id: 'outbid', label: 'Outbid' }
+                { id: 'outbid', label: 'Outbid' },
+                { id: 'lost', label: 'Lost' }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -155,6 +176,11 @@ const MyBids = () => {
                       alt={bid.auctionTitle} 
                       className="w-full h-full object-cover"
                     />
+                    {bid.status === 'lost' && (
+                      <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                        <span className="text-white font-medium text-sm uppercase">Ended</span>
+                      </div>
+                    )}
                   </div>
                   <div className="flex-1">
                     <Link to={`/auction/${bid.auctionId}`}>
@@ -163,15 +189,31 @@ const MyBids = () => {
                     <div className="mt-1 flex justify-between items-start">
                       <div>
                         <p className="text-sm text-gray-500">Your bid: <span className="font-medium text-gray-900">${bid.bidAmount}</span></p>
-                        <p className="text-sm text-gray-500">Current highest: <span className="font-medium text-gray-900">${bid.currentHighestBid}</span></p>
+                        <p className="text-sm text-gray-500">
+                          {bid.status === 'lost' ? 'Final price:' : 'Current highest:'} 
+                          <span className="font-medium text-gray-900"> ${bid.currentHighestBid}</span>
+                        </p>
+                        {bid.status === 'lost' && (
+                          <p className="text-sm text-gray-500">Ended on: <span className="font-medium">{bid.endedDate}</span></p>
+                        )}
                       </div>
                       <div className="flex flex-col items-end">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          bid.status === 'winning' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          bid.status === 'winning' 
+                            ? 'bg-green-100 text-green-800' 
+                            : bid.status === 'outbid' 
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-gray-100 text-gray-800'
                         }`}>
-                          {bid.status === 'winning' ? 'Winning' : 'Outbid'}
+                          {bid.status === 'winning' 
+                            ? 'Winning' 
+                            : bid.status === 'outbid' 
+                              ? 'Outbid'
+                              : 'Lost'}
                         </span>
-                        <span className="text-sm text-gray-500 mt-1">{bid.timeLeft} left</span>
+                        {bid.status !== 'lost' && (
+                          <span className="text-sm text-gray-500 mt-1">{bid.timeLeft} left</span>
+                        )}
                       </div>
                     </div>
                     <div className="mt-4 flex justify-between">

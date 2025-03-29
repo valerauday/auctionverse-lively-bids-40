@@ -9,6 +9,7 @@ import AuctionDetail from "./pages/AuctionDetail";
 import CreateAuction from "./pages/CreateAuction";
 import MyBids from "./pages/MyBids";
 import MyAuctions from "./pages/MyAuctions";
+import AuctionAnalytics from "./pages/AuctionAnalytics";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
         <Route path="/create-auction" element={<CreateAuction />} />
         <Route path="/my-bids" element={<MyBids />} />
         <Route path="/my-auctions" element={<MyAuctions />} />
+        <Route path="/auction-analytics/:id" element={<AuctionAnalytics />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

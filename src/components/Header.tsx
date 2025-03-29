@@ -1,7 +1,7 @@
 
 import { User, Menu } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -13,6 +13,8 @@ import {
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -25,19 +27,34 @@ const Header = () => {
             <nav className="hidden sm:ml-10 sm:flex sm:space-x-8">
               <Link
                 to="/"
-                className="border-auction-purple text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                className={cn(
+                  "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium",
+                  currentPath === "/" 
+                    ? "border-auction-purple text-gray-900" 
+                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                )}
               >
                 Browse
               </Link>
               <Link
                 to="/my-bids"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                className={cn(
+                  "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium",
+                  currentPath === "/my-bids" 
+                    ? "border-auction-purple text-gray-900" 
+                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                )}
               >
                 My Bids
               </Link>
               <Link
                 to="/my-auctions"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                className={cn(
+                  "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium",
+                  currentPath === "/my-auctions" 
+                    ? "border-auction-purple text-gray-900" 
+                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                )}
               >
                 My Auctions
               </Link>
@@ -85,19 +102,34 @@ const Header = () => {
         <div className="pt-2 pb-3 space-y-1">
           <Link
             to="/"
-            className="bg-auction-purple bg-opacity-10 border-auction-purple text-auction-purple block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+            className={cn(
+              "block pl-3 pr-4 py-2 border-l-4 text-base font-medium",
+              currentPath === "/"
+                ? "bg-auction-purple bg-opacity-10 border-auction-purple text-auction-purple"
+                : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
+            )}
           >
             Browse
           </Link>
           <Link
             to="/my-bids"
-            className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+            className={cn(
+              "block pl-3 pr-4 py-2 border-l-4 text-base font-medium",
+              currentPath === "/my-bids"
+                ? "bg-auction-purple bg-opacity-10 border-auction-purple text-auction-purple"
+                : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
+            )}
           >
             My Bids
           </Link>
           <Link
             to="/my-auctions"
-            className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+            className={cn(
+              "block pl-3 pr-4 py-2 border-l-4 text-base font-medium",
+              currentPath === "/my-auctions"
+                ? "bg-auction-purple bg-opacity-10 border-auction-purple text-auction-purple"
+                : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
+            )}
           >
             My Auctions
           </Link>

@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 
 // Dummy data for user's auctions
 const dummyAuctions = [
@@ -215,9 +215,9 @@ const MyAuctions = () => {
                         </>
                       ) : (
                         <>
-                          <Link to={`/auction/${auction.id}`}>
+                          <Link to={`/auction-analytics/${auction.id}`}>
                             <Button variant="default" size="sm">
-                              View Details
+                              View Analytics
                             </Button>
                           </Link>
                           {auction.status === 'active' && (
