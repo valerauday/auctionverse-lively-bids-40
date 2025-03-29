@@ -130,7 +130,7 @@ const StickyBidFooter = ({ auctionId, currentBid, endTime, isEndingSoon, status 
           </div>
           
           {/* Bid Form */}
-          {status === 'active' || status === 'ending-soon' ? (
+          {(status === 'active' || status === 'ending-soon') ? (
             <form onSubmit={handlePlaceBid} className="flex items-center gap-2 w-full sm:w-auto">
               <div className="relative w-full sm:w-36">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
