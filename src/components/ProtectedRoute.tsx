@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, adminOnly = false }: ProtectedRouteProps) => {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user, isAdmin } = useAuth();
   const location = useLocation();
   
   // Show loading state while checking authentication
@@ -26,9 +26,9 @@ const ProtectedRoute = ({ children, adminOnly = false }: ProtectedRouteProps) =>
   }
   
   // Check if route requires admin privileges
-  if (adminOnly && location.pathname.startsWith("/admin")) {
+  if (adminOnly || location.pathname.startsWith("/admin")) {
     // Check if user is admin
-    if (user?.id !== "admin1") {
+    if (!isAdmin) {
       return <Navigate to="/" />;
     }
   }

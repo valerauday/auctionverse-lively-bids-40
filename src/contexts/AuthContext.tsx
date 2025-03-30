@@ -90,6 +90,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           description: `Welcome back, ${userWithoutPassword.name}!`,
         });
         
+        // Redirect admin users to admin panel, regular users to home
+        if (userWithoutPassword.isAdmin) {
+          navigate('/admin');
+        }
+        
         return true;
       } else {
         toast({
