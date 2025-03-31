@@ -1,6 +1,7 @@
 
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import BannedUserScreen from "@/components/BannedUserScreen";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -23,6 +24,11 @@ const ProtectedRoute = ({ children, adminOnly = false }: ProtectedRouteProps) =>
   // Redirect to login if not authenticated
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
+  }
+  
+  // Check if user is banned
+  if (user && user.status === 'banned') {
+    return <BannedUserScreen />;
   }
   
   // Check if route requires admin privileges

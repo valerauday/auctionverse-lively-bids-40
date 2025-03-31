@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
@@ -10,6 +9,7 @@ export interface User {
   name: string;
   avatar: string;
   isAdmin?: boolean;
+  status?: 'active' | 'banned';
 }
 
 interface AuthContextType {
@@ -34,6 +34,7 @@ const dummyUsers = [
     name: 'Admin User',
     avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
     isAdmin: true,
+    status: 'active',
   },
   {
     id: 'user1',
@@ -42,6 +43,7 @@ const dummyUsers = [
     name: 'John Doe',
     avatar: 'https://randomuser.me/api/portraits/men/41.jpg',
     isAdmin: false,
+    status: 'active',
   },
   {
     id: 'user2',
@@ -50,6 +52,16 @@ const dummyUsers = [
     name: 'Jane Smith',
     avatar: 'https://randomuser.me/api/portraits/women/32.jpg',
     isAdmin: false,
+    status: 'active',
+  },
+  {
+    id: 'banned1',
+    email: 'banned@example.com',
+    password: 'password123',
+    name: 'Banned User',
+    avatar: 'https://randomuser.me/api/portraits/men/55.jpg',
+    isAdmin: false,
+    status: 'banned',
   },
 ];
 
@@ -145,6 +157,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name,
         avatar: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 70)}.jpg`,
         isAdmin: false,
+        status: 'active',
       };
       
       setUser(newUser);

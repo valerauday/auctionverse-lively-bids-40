@@ -177,6 +177,11 @@ const Login = () => {
                 <p className="text-xs text-gray-500">Email: jane@example.com</p>
                 <p className="text-xs text-gray-500">Password: password123</p>
               </div>
+              <div className="border border-gray-200 rounded-md p-3 bg-red-50">
+                <p className="text-sm font-medium">Banned User (Demo)</p>
+                <p className="text-xs text-gray-500">Email: banned@example.com</p>
+                <p className="text-xs text-gray-500">Password: password123</p>
+              </div>
             </div>
           </div>
         </div>
