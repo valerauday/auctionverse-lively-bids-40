@@ -26,8 +26,8 @@ const ProtectedRoute = ({ children, adminOnly = false }: ProtectedRouteProps) =>
     return <Navigate to="/login" />;
   }
   
-  // Check if user is banned
-  if (user && user.status === 'banned') {
+  // Check if user is banned - using both status and isBanned flag for backward compatibility
+  if (user && (user.status === 'banned' || user.isBanned === true)) {
     return <BannedUserScreen />;
   }
   
